@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <style>
+        /* Apply basic styles to the table */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>User List</h1>
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>ARN</th>
+                <th>Policies</th>
+                <th>Instances with no Tags</th> <!-- New column for instances with no tags -->
+            </tr>
+        </thead>
+        <tbody>
+            <!-- User details will be inserted here dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('http://localhost:5000/users')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Check if the correct data is received
+                    const tableBody = document.querySelector('#userTable tbody');
+                    data.users.forEach(user => {
+                        const row = document.createElement('tr');
+                        const policies = user.policies.join(', '); // Join policies with comma
+                        const instancesWithNoTags = data.instances_with_no_tags.join(', '); // Join instances with no tags with comma
+                        row.innerHTML = `
+                            <td>${user.username}</td>
+                            <td>${user.arn}</td>
+                            <td>${policies}</td>
+                            <td>${instancesWithNoTags}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
